@@ -1,5 +1,6 @@
 describe("API PUT requast Test suit", () => {
-    it("TC001 Validate that the PUT requests returns correct Response and Data", () => {
+    it(`TC001 Validate that the PUT requests returns 
+        correct Response and Data`, () => {
         //posting the entity to have a test subject
         cy.request({
             method: "POST",
@@ -43,7 +44,7 @@ describe("API PUT requast Test suit", () => {
             })
         })
     })
-    it("TC002 Validating updating “entity_id” rejection form Server", () => {
+    it(`TC002 Validating updating “entity_id” rejection form Server`, () => {
         cy.request({
             method: "POST",
             url: "https://worldentities.org/api/entities",
@@ -73,7 +74,8 @@ describe("API PUT requast Test suit", () => {
             })
         })
     });
-    it("TC003 Validating incorrect data rejection form Server", () => {
+    it(`TC003 Validating Update (PUT) requests should fail if invalid data is supplied 
+        in the request (“is_verified” is expecting Boolean, passing Integer).`, () => {
         //posting the entity to have a test subject
         cy.request({
             method: "POST",
@@ -98,8 +100,155 @@ describe("API PUT requast Test suit", () => {
                 },
                 failOnStatusCode: false
             }).then((res) => {
-                expect(res.status).to.eq(401)
+                expect(res.status).to.eq(400)
             })
         })
     }) 
+    it(`TC004 Validating Update (PUT) requests should fail if invalid data is supplied 
+        in the request (“department_id” property is expecting Integer, passing Boolean).`, () => {
+        //posting the entity to have a test subject
+        cy.request({
+            method: "POST",
+            url: "https://worldentities.org/api/entities",
+            body: { 
+                "name" : "entity1", 
+                "entity_type": "application", 
+                "description": "description of entity 1", 
+                "is_verified": true, 
+                "department_id": 3 
+                } 
+        }).then((res) => {
+            //confirming that the entiry got created
+            expect(res.status).to.eq(201)  
+        }).then((res) => {
+            const entityId = res.body.data.entity_id;
+            cy.request({
+                method: "PUT",
+                url: "https://worldentities.org/api/entities/" +entityId,
+                body: {
+                    "department_id": true,
+                },
+                failOnStatusCode: false
+            }).then((res) => {
+                expect(res.status).to.eq(400)
+            })
+        })
+    })
+    it(`TC005 Validating Update (PUT) requests should fail if invalid data is 
+        supplied in the request (“name” property is expecting String, passing Boolean).`, () => {
+        //posting the entity to have a test subject
+        cy.request({
+            method: "POST",
+            url: "https://worldentities.org/api/entities",
+            body: { 
+                "name" : "entity1", 
+                "entity_type": "application", 
+                "description": "description of entity 1", 
+                "is_verified": true, 
+                "department_id": 3 
+                } 
+        }).then((res) => {
+            //confirming that the entiry got created
+            expect(res.status).to.eq(201)  
+        }).then((res) => {
+            const entityId = res.body.data.entity_id;
+            cy.request({
+                method: "PUT",
+                url: "https://worldentities.org/api/entities/" +entityId,
+                body: {
+                    "name": true,
+                },
+                failOnStatusCode: false
+            }).then((res) => {
+                expect(res.status).to.eq(400)
+            })
+        })
+    })
+    it(`TC006 Validating Update (PUT) requests should fail if invalid data is 
+        supplied in the request (entity_type property is expecting String, passing Boolean).`, () => {
+        //posting the entity to have a test subject
+        cy.request({
+            method: "POST",
+            url: "https://worldentities.org/api/entities",
+            body: { 
+                "name" : "entity1", 
+                "entity_type": "application", 
+                "description": "description of entity 1", 
+                "is_verified": true, 
+                "department_id": 3 
+                } 
+        }).then((res) => {
+            //confirming that the entiry got created
+            expect(res.status).to.eq(201)  
+        }).then((res) => {
+            const entityId = res.body.data.entity_id;
+            cy.request({
+                method: "PUT",
+                url: "https://worldentities.org/api/entities/" +entityId,
+                body: {
+                    "entity_type": false,
+                },
+                failOnStatusCode: false
+            }).then((res) => {
+                expect(res.status).to.eq(400)
+            })
+        })
+    })
+    it(`TC007 Validating Update (PUT) requests should fail if invalid data is 
+        supplied in the request (description property is expecting String, passing Boolean).`, () => {
+        //posting the entity to have a test subject
+        cy.request({
+            method: "POST",
+            url: "https://worldentities.org/api/entities",
+            body: { 
+                "name" : "entity1", 
+                "entity_type": "application", 
+                "description": "description of entity 1", 
+                "is_verified": true, 
+                "department_id": 3 
+                } 
+        }).then((res) => {
+            //confirming that the entiry got created
+            expect(res.status).to.eq(201)  
+        }).then((res) => {
+            const entityId = res.body.data.entity_id;
+            cy.request({
+                method: "PUT",
+                url: "https://worldentities.org/api/entities/" +entityId,
+                body: {
+                    "description": true,
+                },
+                failOnStatusCode: false
+            }).then((res) => {
+                expect(res.status).to.eq(400)
+            })
+        })
+    })
+    it(`TC008 Validating Update (PUT) requests should fail 
+        if no data is supplied in the request.`, () => {
+        //posting the entity to have a test subject
+        cy.request({
+            method: "POST",
+            url: "https://worldentities.org/api/entities",
+            body: { 
+                "name" : "entity1", 
+                "entity_type": "application", 
+                "description": "description of entity 1", 
+                "is_verified": true, 
+                "department_id": 3 
+                } 
+        }).then((res) => {
+            //confirming that the entiry got created
+            expect(res.status).to.eq(201)  
+        }).then((res) => {
+            const entityId = res.body.data.entity_id;
+            cy.request({
+                method: "PUT",
+                url: "https://worldentities.org/api/entities/" +entityId,
+                failOnStatusCode: false
+            }).then((res) => {
+                expect(res.status).to.eq(422)
+            })
+        })
+    })
 })
